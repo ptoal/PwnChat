@@ -1,0 +1,32 @@
+name: PwnChat
+author: Sage905
+main: com.pwn9.pwnchat.PwnChat
+version: 0.0.9
+softdepend: [Vault, PwnFilter]
+
+commands:
+  pchat:
+    description: All PwnChat commands.
+    usage: /<command> [command]
+
+permissions:
+  pwnchat.*:
+    description: Gives all PwnChat permissions
+    default: op
+    children:
+      pwnchat.reload:
+        default: true
+        description: Reload the PwnChat config
+      pwnchat.list:
+        default: true
+        description: List chat channels
+      pwnchat.listen:
+        default: true
+        description: Permit /pchat listen command (if they have permission for that channel)
+      pwnchat.silence:
+        default: true
+        description: Permit /pchat silence command (if they have permission for that channel)
+      pwnchat.talk:
+        default: true
+        description: Permit /pchat talk command (if they have permission for that channel)
+

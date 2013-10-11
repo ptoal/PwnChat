@@ -128,7 +128,6 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
     @Override
     public void onPluginMessageReceived(String dataChannel, Player player, byte[] message) {
         String serverName;
-        System.out.println("Received a message: " + dataChannel); // TODO: DEBUG
 
         if (!dataChannel.equals("BungeeCord")) {
             return;
@@ -141,7 +140,6 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
                 short len = in.readShort();
                 byte[] msgbytes = new byte[len];
                 in.readFully(msgbytes);
-                System.out.println("Received a ChannelMessage!");
 
                 DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
 
@@ -153,13 +151,8 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
                     final String playerName = msgin.readUTF();
                     final String chatMessage = msgin.readUTF();
 
-
-                    System.out.println("Received a PwnChat message!");
                     final Channel chatChannel = ChannelManager.getInstance().getChannel(channelName);
                     if (chatChannel == null) return; // Not for us.
-
-
-                    System.out.println(String.format("Channel: %s, Player: %s, Message: %s",chatChannel, playerName,chatMessage));
 
                     Bukkit.getScheduler().scheduleSyncDelayedTask(this, new BukkitRunnable() {
                         @Override
@@ -199,9 +192,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
          } catch ( IOException ex) {
              getLogger().warning("Caught exception when trying to send: " + ex.getMessage());
          }
-         System.out.println("Sending plugin message to Bungeecord");
          Bukkit.getScheduler().runTask(this,new PluginMessageTask(this, p, b));
-         System.out.println("Sent!");
      }
 
 }

@@ -24,7 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 
@@ -154,17 +153,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
                     final Channel chatChannel = ChannelManager.getInstance().getChannel(channelName);
                     if (chatChannel == null) return; // Not for us.
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(this, new BukkitRunnable() {
-                        @Override
-                        public void run() {
-
-                            // For now, just send the message to players directly.
-                            for (Player p : chatChannel.getRecipients() ) {
-                                p.sendMessage(String.format("[%s]<%s> %s",
-                                        chatChannel.getPrefix(),playerName,chatMessage));
-                            }
-                        }
-                    });
+                    chatChannel.sendMessage(this, playerName, chatMessage);
 
                 }
             }

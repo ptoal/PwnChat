@@ -57,6 +57,7 @@ public class list extends SubCommand {
                         prefix = ChatColor.RED + "[*] ";
                     }
                 }
+                prefix = prefix + "("+channel.getPrefix()+") ";
                 sender.sendMessage(" " + prefix + channel.getName() + " - " + ChatColor.WHITE + channel.getDescription());
             }
         }

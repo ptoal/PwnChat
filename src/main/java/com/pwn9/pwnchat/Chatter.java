@@ -13,9 +13,10 @@ package com.pwn9.pwnchat;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Information about a Player's Chat channels.
@@ -35,7 +36,7 @@ public class Chatter {
         this.playerName = playerName;
         this.player = p;
         focus = ChannelManager.getInstance().getLocal();
-        channels = new HashSet<Channel>();
+        channels = Collections.newSetFromMap(new ConcurrentHashMap<Channel,Boolean>());
     }
 
     public String getPlayerName() {

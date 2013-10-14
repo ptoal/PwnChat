@@ -12,6 +12,8 @@ package com.pwn9.pwnchat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
 import java.util.Set;
@@ -103,5 +105,21 @@ public class Channel {
     public Set<Player> getRecipients() {
         return recipients;
     }
+
+    public void sendMessage(final Plugin p, final String playerName, final String chatMessage) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(p, new BukkitRunnable() {
+            @Override
+            public void run() {
+
+                // For now, just send the message to players directly.
+                for (Player p : getRecipients() ) {
+                    p.sendMessage(String.format("[%s]<%s> %s",
+                            getPrefix(),playerName,chatMessage));
+                }
+            }
+        });
+
+    }
+
 
 }

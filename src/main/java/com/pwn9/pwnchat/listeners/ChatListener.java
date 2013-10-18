@@ -17,8 +17,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.util.Set;
-
 public class ChatListener implements Listener {
 	
 	private PwnChat plugin;
@@ -55,9 +53,16 @@ public class ChatListener implements Listener {
             return;
         }
 
-        // Now, for basic testing, just prepend the channel in the tag
-        event.setFormat("[" + c.getPrefix() + "]<%s> %s");
+        // Build the format string
+        StringBuilder formatString = new StringBuilder();
 
+        // Prepend the channel prefix
+        formatString.append("[").append(c.getPrefix()).append("]").append(event.getFormat());
+
+        event.setFormat(formatString.toString());
+
+// Doesn't block from IRC, because it doesn't cancel. :(
+ /*
         Set<Player> recipientList = event.getRecipients();
 
         try  {
@@ -68,8 +73,10 @@ public class ChatListener implements Listener {
             event.setCancelled(true);
             return;
         }
-
-        plugin.sendToChannel(p,c, event.getMessage());
+   */
+        event.setCancelled(true);
+        c.sendMessage(plugin,p.getName(),formatString.toString(),event.getMessage());
+        plugin.sendToChannel(p,c,formatString.toString(), event.getMessage());
 	}
 
     /**

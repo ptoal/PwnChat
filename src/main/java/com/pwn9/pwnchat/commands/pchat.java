@@ -16,6 +16,7 @@ import com.pwn9.pwnchat.PwnChat;
 import com.pwn9.pwnchat.commands.subcommands.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import static org.bukkit.ChatColor.GOLD;
 
@@ -46,7 +47,11 @@ public class pchat extends BaseCommandExecutor {
                     for ( i = 1 ; i < args.length ; i++ ) {
                         message.append(args[i]).append(" ");
                     }
-                    c.sendMessage(plugin,sender.getName(),message.toString().trim());
+                    String format = plugin.getFormat(sender, c);
+                    c.sendMessage(plugin,sender.getName(),format,message.toString().trim());
+                    if (sender instanceof Player) {
+                        plugin.sendToChannel((Player)sender, c, format, message.toString().trim());
+                    }
                     return true;
                 }
             }

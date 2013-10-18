@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time: 7:23 PM
  */
 public class Channel {
-
+   // TODO: Add flag for private channels, so they can be cancelled, to avoid showing in IRC
     private String name;
     private String description;
     private String prefix;
@@ -106,15 +106,15 @@ public class Channel {
         return recipients;
     }
 
-    public void sendMessage(final Plugin p, final String playerName, final String chatMessage) {
+    public void sendMessage(final Plugin p, final String playerName, final String format, final String chatMessage) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(p, new BukkitRunnable() {
             @Override
             public void run() {
 
                 // For now, just send the message to players directly.
                 for (Player p : getRecipients() ) {
-                    p.sendMessage(String.format("[%s]<%s> %s",
-                            getPrefix(),playerName,chatMessage));
+                    p.sendMessage(String.format(format,
+                            playerName,chatMessage));
                 }
             }
         });

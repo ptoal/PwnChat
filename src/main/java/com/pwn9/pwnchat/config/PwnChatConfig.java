@@ -23,12 +23,14 @@ public class PwnChatConfig extends Config {
         admin.put("description","Admin-only channel");
         admin.put("prefix","@");
         admin.put("permission","pwnchat.channel.admin");
+        admin.put("private","true");
         channels.put("admin",admin);
 
         HashMap<String, String> global = new HashMap<String, String>();
         global.put("description","Global Channel");
         global.put("prefix","G");
         global.put("permission","pwnchat.channel.global");
+        global.put("private","false");
         channels.put("global",global);
 
 	}

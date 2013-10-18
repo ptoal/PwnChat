@@ -3,7 +3,31 @@
   <groupId>com.pwn9</groupId>
   <artifactId>PwnChat</artifactId>
   <name>PwnChat</name>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
+
+    <profiles>
+        <profile>
+            <id>jenkins</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <pwnchat.version>${project.version}-b${env.BUILD_NUMBER}</pwnchat.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>profile-1</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <pwnchat.version>${project.version}-dev-${maven.build.timestamp}</pwnchat.version>
+            </properties>
+        </profile>
+
+    </profiles>
 
     <build>
         <finalName>${project.name}</finalName>

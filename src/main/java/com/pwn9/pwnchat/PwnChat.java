@@ -19,6 +19,7 @@ import com.pwn9.pwnchat.tasks.PluginMessageTask;
 import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -44,6 +45,8 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        setupChat();
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
@@ -83,6 +86,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
 		return (chat != null);
 	}
+
 
 //	public boolean onCommand(CommandSender sender, Command command,
 //			String label, String[] args) {
@@ -124,6 +128,21 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 		return this.config;
 	}
 
+    public String getFormat(CommandSender p, Channel c) {
+        StringBuilder formatString = new StringBuilder();
+
+        if (c != null && !c.getPrefix().isEmpty()) {
+            formatString.append("[" + c.getPrefix() + "]");
+        }
+        if (chat != null && (p instanceof Player)) {
+            formatString.append(chat.getPlayerPrefix((Player)p)).append("%s").
+                    append(chat.getPlayerSuffix((Player)p)).append(":§r %s");
+        } else {
+            formatString.append("%s:§r %s");
+        }
+        return ChatColor.translateAlternateColorCodes('&',formatString.toString());
+    }
+
     @Override
     public void onPluginMessageReceived(String dataChannel, Player player, byte[] message) {
         String serverName;
@@ -148,12 +167,13 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
                     final String channelName = msgin.readUTF(); // Get the channel name.
                     final String playerName = msgin.readUTF();
+                    final String format = msgin.readUTF();
                     final String chatMessage = msgin.readUTF();
 
                     final Channel chatChannel = ChannelManager.getInstance().getChannel(channelName);
                     if (chatChannel == null) return; // Not for us.
 
-                    chatChannel.sendMessage(this, playerName, chatMessage);
+                    chatChannel.sendMessage(this, playerName, format, chatMessage);
 
                 }
             }
@@ -162,7 +182,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
         }
     }
 
-     public void sendToChannel(Player p, Channel c, String message) {
+     public void sendToChannel(Player p, Channel c, String format, String message) {
          ByteArrayOutputStream b = new ByteArrayOutputStream();
          DataOutputStream out = new DataOutputStream(b);
 
@@ -175,6 +195,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
              msgout.writeUTF("ChannelMessage");
              msgout.writeUTF(c.getName());
              msgout.writeUTF(p.getName());
+             msgout.writeUTF(format);
              msgout.writeUTF(message);
              out.writeShort(msgbytes.toByteArray().length);
              out.write(msgbytes.toByteArray());

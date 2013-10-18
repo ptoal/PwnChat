@@ -13,15 +13,10 @@ package com.pwn9.pwnchat.listeners;
 import com.pwn9.pwnchat.Chatter;
 import com.pwn9.pwnchat.ChatterManager;
 import com.pwn9.pwnchat.PwnChat;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Listen for Player join events and set up their default channels.
@@ -39,6 +34,10 @@ public class PlayerQuitListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent event) {
+
+
+        Chatter chatter = ChatterManager.getInstance().getOrCreateChatter(event.getPlayer());
+        ChatterManager.getInstance().removeChatter(chatter);
         /*
         Every time someone leaves, check to see how many players are online,
         and if there are more than 20 chatters over that number, clean out
@@ -48,10 +47,10 @@ public class PlayerQuitListener implements Listener {
         at the same time caching the players joined channels for a little while.
 
         TODO: Synchronize player channels / settings across servers.
-
+        TODO: Make the code below work without removing players from channels when someone else logs out!
         */
 
-        List<Player> onlinePlayers = new ArrayList<Player>(Arrays.asList(plugin.getServer().getOnlinePlayers()));
+/*        List<Player> onlinePlayers = new ArrayList<Player>(Arrays.asList(plugin.getServer().getOnlinePlayers()));
 
         if (ChatterManager.getInstance().getAllChatters().size() -
                 onlinePlayers.size() > 20 ) {
@@ -61,6 +60,6 @@ public class PlayerQuitListener implements Listener {
                     ChatterManager.getInstance().removeChatter(chatter);
                 }
             }
-        }
+        }*/
     }
 }

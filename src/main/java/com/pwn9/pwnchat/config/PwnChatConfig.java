@@ -39,6 +39,7 @@ public class PwnChatConfig extends Config {
 
     public boolean Settings_BungeeCord = true;
     public String Settings_debug = "off";
+    public String Settings_defaultChannel = "local";
 //	public boolean Settings_VaultSupport = true;
 //	public boolean Settings_FactionServer = false;
 //	public boolean Settings_CancelChatEvents = false;

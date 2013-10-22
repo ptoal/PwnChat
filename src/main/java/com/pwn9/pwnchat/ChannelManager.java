@@ -31,6 +31,7 @@ public class ChannelManager {
     private ConcurrentHashMap<String, Channel> channels = new ConcurrentHashMap<String, Channel>();
     private HashMap<Character, Channel> shortcuts = new HashMap<Character,Channel>();
     private Channel local;
+    private Channel defaultChannel;
 
     private ChannelManager() {}
 
@@ -66,8 +67,23 @@ public class ChannelManager {
             chan.registerBridge(); // Register this channel with the bridge
 
             p.getLogger().info("Configured Channel: " + chan.getName());
+
+            String defaultName = config.Settings_defaultChannel;
+
+            if (ChannelManager.getInstance().exists(defaultName)) {
+                defaultChannel = channels.get(defaultName);
+            }
+
         }
 
+    }
+
+    public Channel getDefaultChannel() {
+        return defaultChannel;
+    }
+
+    public boolean exists(String cName) {
+        return channels.contains(cName);
     }
 
     public synchronized void add(Channel c) {

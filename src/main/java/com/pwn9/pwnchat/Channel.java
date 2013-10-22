@@ -30,7 +30,7 @@ public class Channel {
     private String name;
     private String description;
     private String prefix;
-    private String shortcut;
+    private Character shortcut;
     private String permission = "";
     private boolean privateChannel = true;
     private Set<Chatter> chatters = Collections.newSetFromMap(new ConcurrentHashMap<Chatter,Boolean>());
@@ -137,11 +137,11 @@ public class Channel {
 
     }
 
-    public String getShortcut() {
+    public Character getShortcut() {
         return shortcut;
     }
 
-    public void setShortcut(String shortcut) {
+    public void setShortcut(Character shortcut) {
         this.shortcut = shortcut;
     }
 }

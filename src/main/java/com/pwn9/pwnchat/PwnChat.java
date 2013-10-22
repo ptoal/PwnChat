@@ -150,6 +150,8 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 	}
 
     public String getFormat(CommandSender p, Channel c) {
+
+        //TODO: Implement Essesntials-style chat formatting, and vault affix support.
         StringBuilder formatString = new StringBuilder();
 
         if (c != null && !c.getPrefix().isEmpty()) {

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- * Unified Logging interface for PwnFilter-related messages
+ * Unified Logging interface for PwnChat-related messages
  * User: ptoal
  * Date: 13-10-02
  * Time: 4:50 PM

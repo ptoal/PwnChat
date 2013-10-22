@@ -29,6 +29,7 @@ public class ChannelManager {
 
     private static ChannelManager _instance = null;
     private ConcurrentHashMap<String, Channel> channels = new ConcurrentHashMap<String, Channel>();
+    private HashMap<Character, Channel> shortcuts = new HashMap<Character,Channel>();
     private Channel local;
 
     private ChannelManager() {}
@@ -46,32 +47,53 @@ public class ChannelManager {
         getLocal();
         p.getLogger().info("Configured Channel: " + local.getName());
 
-        LogManager lm = LogManager.getInstance();
 
         for ( Map.Entry<String, ConfigChannel> channelEntry : config.channels.entrySet()) {
-            StringBuilder sb = new StringBuilder();
             Channel chan = channels.get(channelEntry.getKey());
             if (chan == null ) {
                 chan = new Channel(channelEntry.getKey());
             }
+
             ConfigChannel configChannel = channelEntry.getValue();
-            sb.append("Configuring Channel <" + channelEntry.getKey() + ">");
+
             chan.setDescription(configChannel.description);
-            sb.append(" Description: " + configChannel.description);
             chan.setPermission(configChannel.permission);
-            sb.append(" Permission: " + configChannel.permission);
             chan.setPrefix(configChannel.prefix);
-            sb.append(" Prefix: " + configChannel.prefix);
             chan.setPrivate(configChannel.privacy);
-            sb.append(" Privacy: " + configChannel.privacy);
             chan.setShortcut(configChannel.shortcut);
-            sb.append(" Shortcut: " + configChannel.shortcut);
-            lm.debugMedium(sb.toString());
+
             channels.put(chan.getName(), chan);
             chan.registerBridge(); // Register this channel with the bridge
+
             p.getLogger().info("Configured Channel: " + chan.getName());
         }
 
+    }
+
+    public synchronized void add(Channel c) {
+
+        channels.put(c.getName(),c);
+        Channel old = shortcuts.put(c.getShortcut(),c);
+        if (old != null ) {
+            LogManager.logger.warning("Overriding Shortcut: '" + c.getPrefix() + "'. Old channel: " +
+            old.getName() + ", new channel: " + c.getName());
+        }
+
+        //Debugging
+        StringBuilder sb = new StringBuilder();
+        sb.append("Configuring Channel <" + c.getName() + ">");
+        sb.append(" Description: " + c.getDescription());
+        sb.append(" Permission: " + c.getPermission());
+        sb.append(" Prefix: " + c.getPrefix());
+        sb.append(" Privacy: " + c.isPrivateChannel());
+        sb.append(" Shortcut: " + c.getShortcut());
+        LogManager.getInstance().debugMedium(sb.toString());
+
+    }
+
+    public synchronized void remove(Channel c) {
+        shortcuts.remove(c.getShortcut());
+        channels.remove(c.getName());
     }
 
     public Channel getChannel(String name) {
@@ -80,6 +102,10 @@ public class ChannelManager {
 
     public Collection<Channel> getChannelList() {
         return channels.values();
+    }
+
+    public Channel shortcutLookup(String s) {
+      return shortcuts.get(s.charAt(0));
     }
 
     public Channel getLocal() {

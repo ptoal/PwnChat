@@ -13,7 +13,7 @@ public class ConfigChannel extends ConfigObject {
 
     public String description = "";
     public String prefix = null;
-    public String shortcut = null;
+    public Character shortcut = null;
     public String permission = "";
     public boolean privacy = true;
 

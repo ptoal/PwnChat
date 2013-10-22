@@ -41,10 +41,17 @@ public class ChatListener implements Listener {
         Player p = event.getPlayer();
         Chatter chatter = ChatterManager.getInstance().getOrCreateChatter(p);
 
-        Channel c = chatter.getFocus();
+        // If using a shortcut, override the current channel focus
+        Channel c = ChannelManager.getInstance().shortcutLookup(event.getMessage());
 
+        // If not using shortcut, try channel focus.
+        if (c == null) {
+            c = chatter.getFocus();
+        }
+
+        // If no channel, then return, as we're just going to let the local chat
+        // handle it. TODO: Modify this when we take over formatting.
         if (c == null || c.equals(ChannelManager.getInstance().getLocal())) return;
-        // Player is in local server channel.
 
         if (!p.hasPermission(c.getPermission())) {
             // They don't have permission for this channel anymore.

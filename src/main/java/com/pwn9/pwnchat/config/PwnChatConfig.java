@@ -22,7 +22,7 @@ public class PwnChatConfig extends Config {
         ConfigChannel admin = new ConfigChannel();
         admin.description = "Admin-only channel";
         admin.prefix = "A";
-        admin.shortcut = '@';
+        admin.shortcut = "@";
         admin.permission = "pwnchat.channel.admin";
         admin.privacy = true;
         channels.put("admin",admin);
@@ -31,7 +31,7 @@ public class PwnChatConfig extends Config {
         ConfigChannel global = new ConfigChannel();
         global.description = "Global Channel";
         global.prefix = "G";
-        admin.shortcut = '*';
+        global.shortcut = "*";
         global.permission = "pwnchat.channel.global";
         global.privacy = false;
         channels.put("global",global);

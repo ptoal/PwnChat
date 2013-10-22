@@ -45,7 +45,7 @@ public class silence extends SubCommand {
             return true;
         }
 
-        Channel channel = ChannelManager.getInstance().getChannel(args[1]);
+        Channel channel = ChannelManager.getInstance().getChannel(args[1].toLowerCase());
 
         if (channel == null ) {
             sender.sendMessage(PwnChat.PREFIX + " Channel named: " + args[1] + " does not exist!");

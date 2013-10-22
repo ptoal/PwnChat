@@ -50,7 +50,7 @@ public class listen extends SubCommand {
         }
 
         Chatter chatter = ChatterManager.getInstance().getOrCreateChatter((Player)sender);
-        Channel channel = ChannelManager.getInstance().getChannel(args[1]);
+        Channel channel = ChannelManager.getInstance().getChannel(args[1].toLowerCase());
 
         if (channel == null ) {
             sender.sendMessage(PwnChat.PREFIX + " Channel named: " + args[1] + " does not exist!");

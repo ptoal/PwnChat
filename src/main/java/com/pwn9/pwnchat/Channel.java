@@ -37,7 +37,7 @@ public class Channel {
     private Set<Player> recipients = Collections.newSetFromMap(new ConcurrentHashMap<Player, Boolean>());
 
     public Channel(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public String getName() {
@@ -45,7 +45,7 @@ public class Channel {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public String getDescription() {

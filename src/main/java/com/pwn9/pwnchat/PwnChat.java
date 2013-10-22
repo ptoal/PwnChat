@@ -42,6 +42,11 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
     }
 
     @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        ChannelManager.getInstance().setupChannels(this, config);
+    }
+
     public void onEnable() {
 
         try {

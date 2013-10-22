@@ -50,7 +50,7 @@ public class ChannelManager {
 
 
         for ( Map.Entry<String, ConfigChannel> channelEntry : config.channels.entrySet()) {
-            Channel chan = channels.get(channelEntry.getKey());
+            Channel chan = channels.get(channelEntry.getKey().toLowerCase());
             if (chan == null ) {
                 chan = new Channel(channelEntry.getKey());
             }
@@ -61,16 +61,17 @@ public class ChannelManager {
             chan.setPermission(configChannel.permission);
             chan.setPrefix(configChannel.prefix);
             chan.setPrivate(configChannel.privacy);
-            chan.setShortcut(configChannel.shortcut);
+            chan.setShortcut(configChannel.shortcut.charAt(0));
 
             channels.put(chan.getName(), chan);
             chan.registerBridge(); // Register this channel with the bridge
 
-            p.getLogger().info("Configured Channel: " + chan.getName());
+            LogManager.logger.info("Configured Channel: " + chan.getName());
 
-            String defaultName = config.Settings_defaultChannel;
+            String defaultName = config.Settings_defaultChannel.toLowerCase();
 
             if (ChannelManager.getInstance().exists(defaultName)) {
+                LogManager.getInstance().debugMedium("Setting Default Channel to: " + defaultName);
                 defaultChannel = channels.get(defaultName);
             }
 
@@ -83,7 +84,7 @@ public class ChannelManager {
     }
 
     public boolean exists(String cName) {
-        return channels.contains(cName);
+        return channels.containsKey(cName);
     }
 
     public synchronized void add(Channel c) {
@@ -156,7 +157,7 @@ public class ChannelManager {
             }
 
             for ( Channel channel : channelList ) {
-                if (channel.getName().startsWith(args[1])) completions.add(channel.getName());
+                if (channel.getName().startsWith(args[1].toLowerCase())) completions.add(channel.getName());
             }
 
         }

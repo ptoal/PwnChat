@@ -32,9 +32,16 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
 	private Chat chat = null;
 	private PwnChatConfig config;
+    private LogManager logManager;
 
     public static final String PREFIX = ChatColor.YELLOW + "[PwnChat]";
 
+    @Override
+    public void onLoad() {
+        LogManager.getInstance(getLogger(), getDataFolder());
+    }
+
+    @Override
     public void onEnable() {
 
         try {
@@ -46,10 +53,11 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
             return;
         }
 
+        setupLog();
+
         setupChat();
 
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
+        setupBungeeChannels();
 
         ChannelManager.getInstance().setupChannels(this, config);
 
@@ -76,6 +84,18 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
     getLogger().info("PwnFilter Dependency not found.  Disabling chat filtering.");
     }
 
+    private void setupLog() {
+        logManager = LogManager.getInstance();
+        logManager.start("pwnchat.log");
+        LogManager.DebugModes dm;
+        try {
+            dm = LogManager.DebugModes.valueOf(config.Settings_debug);
+        } catch (IllegalArgumentException ex ) {
+            dm = LogManager.DebugModes.off;
+        }
+        logManager.setDebugMode(dm);
+    }
+
     private boolean setupChat() {
 		RegisteredServiceProvider<Chat> chatProvider = getServer()
 				.getServicesManager().getRegistration(
@@ -87,6 +107,15 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 		return (chat != null);
 	}
 
+    private void setupBungeeChannels() {
+        if (config.Settings_BungeeCord == true) {
+            getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+            getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
+        } else {
+            getServer().getMessenger().unregisterIncomingPluginChannel(this,"BungeeCord", this);
+            getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
+        }
+    }
 
 //	public boolean onCommand(CommandSender sender, Command command,
 //			String label, String[] args) {
@@ -115,17 +144,9 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 		return this.chat;
 	}
 
-	private void registerPluginChannels() {
-		Bukkit.getMessenger().registerOutgoingPluginChannel(this,
-				"PwnChat");
-	}
-
 	private void disable() {
 		Bukkit.getPluginManager().disablePlugin(this);
-	}
 
-	public PwnChatConfig getPwnChatConfig() {
-		return this.config;
 	}
 
     public String getFormat(CommandSender p, Channel c) {
@@ -150,6 +171,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
         if (!dataChannel.equals("BungeeCord")) {
             return;
         }
+        LogManager.getInstance().debugMedium("Received message from bungeecord.");
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
         try {
@@ -172,6 +194,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
                     final Channel chatChannel = ChannelManager.getInstance().getChannel(channelName);
                     if (chatChannel == null) return; // Not for us.
+                    LogManager.getInstance().debugMedium(String.format("[%s] <%s> (<%s>) %s", channelName, playerName, format, chatMessage));
 
                     chatChannel.sendMessage(this, playerName, format, chatMessage);
 
@@ -183,6 +206,9 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
     }
 
      public void sendToChannel(Player p, Channel c, String format, String message) {
+
+         if (!getServer().getMessenger().isOutgoingChannelRegistered(this,"BungeeCord")) return;
+
          ByteArrayOutputStream b = new ByteArrayOutputStream();
          DataOutputStream out = new DataOutputStream(b);
 

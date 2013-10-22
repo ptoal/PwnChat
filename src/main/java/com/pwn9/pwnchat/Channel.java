@@ -30,7 +30,9 @@ public class Channel {
     private String name;
     private String description;
     private String prefix;
+    private String shortcut;
     private String permission = "";
+    private boolean privateChannel = true;
     private Set<Chatter> chatters = Collections.newSetFromMap(new ConcurrentHashMap<Chatter,Boolean>());
     private Set<Player> recipients = Collections.newSetFromMap(new ConcurrentHashMap<Player, Boolean>());
 
@@ -80,6 +82,7 @@ public class Channel {
             this.chatters.add(c);
             this.recipients.add(c.getPlayer());
             c.addChannel(this);
+            LogManager.getInstance().debugMedium("Added " + c.getPlayerName() + " to [" + this.getName() + "]");
             return true;
         } else return false;
     }
@@ -88,6 +91,7 @@ public class Channel {
         c.removeChannel(this);
         this.chatters.remove(c);
         this.recipients.remove(c.getPlayer());
+        LogManager.getInstance().debugMedium("Removed " + c.getPlayerName() + " from [" + this.getName() + "]");
     }
 
     public boolean hasPermission(Chatter c) {
@@ -106,7 +110,19 @@ public class Channel {
         return recipients;
     }
 
+    public boolean isPrivateChannel() {
+        return privateChannel;
+    }
+
+    public void setPrivate(boolean privateChannel) {
+        this.privateChannel = privateChannel;
+    }
+
     public void sendMessage(final Plugin p, final String playerName, final String format, final String chatMessage) {
+        StringBuilder recipients = new StringBuilder();
+        for (Player r : getRecipients()) { recipients.append(r.getName()).append(" "); }
+        LogManager.getInstance().debugMedium("Sending message: " + chatMessage + " to [" + recipients.toString().trim() + "]");
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(p, new BukkitRunnable() {
             @Override
             public void run() {
@@ -121,5 +137,11 @@ public class Channel {
 
     }
 
+    public String getShortcut() {
+        return shortcut;
+    }
 
+    public void setShortcut(String shortcut) {
+        this.shortcut = shortcut;
+    }
 }

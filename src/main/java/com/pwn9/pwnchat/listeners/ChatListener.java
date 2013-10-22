@@ -17,6 +17,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.Set;
+
 public class ChatListener implements Listener {
 	
 	private PwnChat plugin;
@@ -61,22 +63,23 @@ public class ChatListener implements Listener {
 
         event.setFormat(formatString.toString());
 
-// Doesn't block from IRC, because it doesn't cancel. :(
- /*
-        Set<Player> recipientList = event.getRecipients();
-
-        try  {
-            recipientList.clear();
-            recipientList.addAll(c.getRecipients());
-        } catch (UnsupportedOperationException ex) {
-            plugin.getLogger().warning("Caught an exception while trying to manipulate recipients list: "+ex.getMessage());
+        if (c.isPrivateChannel()) {
             event.setCancelled(true);
-            return;
+            c.sendMessage(plugin,p.getName(),formatString.toString(),event.getMessage());
+        } else {
+            Set<Player> recipientList = event.getRecipients();
+
+            try  {
+                recipientList.clear();
+                recipientList.addAll(c.getRecipients());
+            } catch (UnsupportedOperationException ex) {
+                plugin.getLogger().warning("Caught an exception while trying to manipulate recipients list: "+ex.getMessage());
+                event.setCancelled(true);
+                return;
+            }
         }
-   */
-        event.setCancelled(true);
-        c.sendMessage(plugin,p.getName(),formatString.toString(),event.getMessage());
         plugin.sendToChannel(p,c,formatString.toString(), event.getMessage());
+
 	}
 
     /**

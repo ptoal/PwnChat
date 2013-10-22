@@ -19,29 +19,32 @@ public class PwnChatConfig extends Config {
 		CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
 		CONFIG_HEADER = "PwnChat Configuration";
 
-        HashMap<String, String> admin = new HashMap<String, String>();
-        admin.put("description","Admin-only channel");
-        admin.put("prefix","@");
-        admin.put("permission","pwnchat.channel.admin");
-        admin.put("private","true");
+        ConfigChannel admin = new ConfigChannel();
+        admin.description = "Admin-only channel";
+        admin.prefix = "A";
+        admin.shortcut = "@";
+        admin.permission = "pwnchat.channel.admin";
+        admin.privacy = true;
         channels.put("admin",admin);
 
-        HashMap<String, String> global = new HashMap<String, String>();
-        global.put("description","Global Channel");
-        global.put("prefix","G");
-        global.put("permission","pwnchat.channel.global");
-        global.put("private","false");
-        channels.put("global",global);
 
+        ConfigChannel global = new ConfigChannel();
+        global.description = "Global Channel";
+        global.prefix = "G";
+        admin.shortcut = "*";
+        global.permission = "pwnchat.channel.global";
+        global.privacy = false;
+        channels.put("global",global);
 	}
-	
+
+    public boolean Settings_BungeeCord = true;
+    public String Settings_debug = "off";
 //	public boolean Settings_VaultSupport = true;
-	public boolean Settings_FactionServer = false;
+//	public boolean Settings_FactionServer = false;
 //	public boolean Settings_CancelChatEvents = false;
 //	public boolean BroadcastToAllServers = false;
 
-    public HashMap<String,HashMap<String,String>> channels = new HashMap<String, HashMap<String, String>>();
-
+    public HashMap<String,ConfigChannel> channels = new HashMap<String, ConfigChannel>();
 
 
 }

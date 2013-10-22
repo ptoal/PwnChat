@@ -10,6 +10,7 @@
 
 package com.pwn9.pwnchat;
 
+import com.pwn9.pwnchat.config.ConfigChannel;
 import com.pwn9.pwnchat.config.PwnChatConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -41,22 +42,31 @@ public class ChannelManager {
     }
 
     public void setupChannels(PwnChat p, PwnChatConfig config) {
-
         // Always make sure the local channel is set up.
         getLocal();
         p.getLogger().info("Configured Channel: " + local.getName());
 
+        LogManager lm = LogManager.getInstance();
 
-        for ( Map.Entry<String, HashMap<String,String>> channelConfig : config.channels.entrySet()) {
-
-            Channel chan = channels.get(channelConfig.getKey());
+        for ( Map.Entry<String, ConfigChannel> channelEntry : config.channels.entrySet()) {
+            StringBuilder sb = new StringBuilder();
+            Channel chan = channels.get(channelEntry.getKey());
             if (chan == null ) {
-                chan = new Channel(channelConfig.getKey());
+                chan = new Channel(channelEntry.getKey());
             }
-            HashMap<String,String> properties = channelConfig.getValue();
-            chan.setDescription(properties.get("description"));
-            chan.setPermission(properties.get("permission"));
-            chan.setPrefix(properties.get("prefix"));
+            ConfigChannel configChannel = channelEntry.getValue();
+            sb.append("Configuring Channel <" + channelEntry.getKey() + ">");
+            chan.setDescription(configChannel.description);
+            sb.append(" Description: " + configChannel.description);
+            chan.setPermission(configChannel.permission);
+            sb.append(" Permission: " + configChannel.permission);
+            chan.setPrefix(configChannel.prefix);
+            sb.append(" Prefix: " + configChannel.prefix);
+            chan.setPrivate(configChannel.privacy);
+            sb.append(" Privacy: " + configChannel.privacy);
+            chan.setShortcut(configChannel.shortcut);
+            sb.append(" Shortcut: " + configChannel.shortcut);
+            lm.debugMedium(sb.toString());
             channels.put(chan.getName(), chan);
             chan.registerBridge(); // Register this channel with the bridge
             p.getLogger().info("Configured Channel: " + chan.getName());
@@ -80,6 +90,7 @@ public class ChannelManager {
             local = new Channel("local");
             local.setDescription("Local Server (default)");
             local.setPrefix("L");
+            local.setPrivate(false);
             channels.put("local",local);
         }
         return local;

@@ -87,11 +87,12 @@ public class Channel {
         } else return false;
     }
 
-    public void removeChatter(Chatter c) {
+    public boolean removeChatter(Chatter c) {
         c.removeChannel(this);
         this.chatters.remove(c);
         this.recipients.remove(c.getPlayer());
         LogManager.getInstance().debugMedium("Removed " + c.getPlayerName() + " from [" + this.getName() + "]");
+        return true;
     }
 
     public boolean hasPermission(Chatter c) {

@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Chatter {
 
     private String playerName; // Player name
-    private Set<Channel> channels; //All channels this player is permitted to join
+    private Set<Channel> channels; //All channels this player is listening to.
     private Channel focus; // Channel this player is talking in. (default = local = local server)
     private Player player;
 
@@ -55,12 +55,22 @@ public class Chatter {
         this.channels = channels;
     }
 
-    public void addChannel(Channel c) {
-        channels.add(c);
+    public boolean addChannel(Channel c) {
+        if (c.addChatter(this)) {
+            channels.add(c);
+            return true;
+        }
+        return false;
     }
 
-    public void removeChannel(Channel c) {
-        channels.remove(c);
+    public boolean removeChannel(Channel c) {
+        if (c.removeChatter(this)) {
+            channels.remove(c);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     public Channel getFocus() {

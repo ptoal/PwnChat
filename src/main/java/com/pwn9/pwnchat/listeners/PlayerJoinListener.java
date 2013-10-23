@@ -40,7 +40,7 @@ public class PlayerJoinListener implements Listener {
         StringBuilder channelMessage = new StringBuilder();
 
         for (Channel c: ChannelManager.getInstance().getChannelList()) {
-            if(c.addChatter(chatter)) {
+            if(chatter.addChannel(c)) {
                 channelMessage.append(c.getName()).append(",");
             }
         }

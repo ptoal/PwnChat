@@ -63,7 +63,7 @@ public class listen extends SubCommand {
             return true;
         }
 
-        if (channel.addChatter(chatter)) {
+        if (chatter.addChannel(channel)) {
             sender.sendMessage(PwnChat.PREFIX + " You will now hear chat from the '" + channel.getName() + "' channel.");
         } else {
             sender.sendMessage(PwnChat.PREFIX + " You aren't allowed to listen to the '" + channel.getName() + "' channel!");

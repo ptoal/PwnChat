@@ -63,7 +63,7 @@ public class ChannelManager {
             chan.setPrivate(configChannel.privacy);
             chan.setShortcut(configChannel.shortcut.charAt(0));
 
-            channels.put(chan.getName(), chan);
+            add(chan);
             chan.registerBridge(); // Register this channel with the bridge
 
             LogManager.logger.info("Configured Channel: " + chan.getName());
@@ -71,7 +71,7 @@ public class ChannelManager {
             String defaultName = config.Settings_defaultChannel.toLowerCase();
 
             if (ChannelManager.getInstance().exists(defaultName)) {
-                LogManager.getInstance().debugMedium("Setting Default Channel to: " + defaultName);
+                LogManager.logger.info("Setting Default Channel to: " + defaultName);
                 defaultChannel = channels.get(defaultName);
             }
 

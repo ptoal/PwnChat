@@ -32,6 +32,7 @@ public class pchat extends BaseCommandExecutor {
         addSubCommand(new listen(instance));
         addSubCommand(new silence(instance));
         addSubCommand(new talk(instance));
+        addSubCommand(new dumpdata(instance));
     }
 
     @Override

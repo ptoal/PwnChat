@@ -34,11 +34,7 @@ public class ChatterManager {
         return _instance;
     }
 
-    public Chatter getByName(String playerName) {
-        return chatters.get(playerName);
-    }
-
-    public Chatter getOrCreateChatter(Player player) {
+    public Chatter getOrCreate(Player player) {
 
         if (player == null) return null;
 
@@ -49,20 +45,25 @@ public class ChatterManager {
         if (c == null) {
             c = new Chatter(playerName, player);
             chatters.put(playerName,c);
+        } else {
+            // Need to update with current player instance!
+            c.setPlayer(player);
         }
 
         return c;
 
     }
 
-    public void removeChatter(Chatter c) {
-        for (Channel channel : c.getChannels()) {
-            channel.removeChatter(c);
-        }
-        chatters.remove(c);
+    public void remove(Chatter c) {
+
+        // Make sure that Chatter isn't part of any channels.
+        if (!c.getChannels().isEmpty())
+            throw new IllegalStateException("Chatter can't be removed while joined to channels.");
+        // Remove chatter from list.
+        chatters.remove(c.getPlayerName());
     }
 
-    public Collection<Chatter> getAllChatters() {
+    public Collection<Chatter> getAll() {
         return chatters.values();
     }
 

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +39,10 @@ public class Channel {
 
     public Channel(String name) {
         this.name = name.toLowerCase();
+    }
+
+    public Collection<Chatter> getChatters() {
+        return chatters;
     }
 
     public String getName() {
@@ -81,18 +86,33 @@ public class Channel {
         if (hasPermission(c)) {
             this.chatters.add(c);
             this.recipients.add(c.getPlayer());
-            c.addChannel(this);
             LogManager.getInstance().debugMedium("Added " + c.getPlayerName() + " to [" + this.getName() + "]");
             return true;
         } else return false;
     }
 
+    /* Remove this channel. */
+    public void remove() {
+        removeAllChatters();
+        ChannelManager.getInstance().remove(this);
+    }
+
     public boolean removeChatter(Chatter c) {
-        c.removeChannel(this);
         this.chatters.remove(c);
         this.recipients.remove(c.getPlayer());
         LogManager.getInstance().debugMedium("Removed " + c.getPlayerName() + " from [" + this.getName() + "]");
         return true;
+    }
+
+    public boolean hasChatters() {
+        return !chatters.isEmpty();
+    }
+
+    public void removeAllChatters() {
+        for (Chatter c : chatters ) {
+            c.removeChannel(this);
+        }
+        if (!chatters.isEmpty()) throw new IllegalStateException("Unable to remove all chatters from channel: " + this.name);
     }
 
     public boolean hasPermission(Chatter c) {

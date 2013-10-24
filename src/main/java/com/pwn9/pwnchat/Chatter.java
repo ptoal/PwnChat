@@ -64,13 +64,21 @@ public class Chatter {
     }
 
     public boolean removeChannel(Channel c) {
-        if (c.removeChatter(this)) {
-            channels.remove(c);
-            return true;
-        } else {
-            return false;
-        }
+        c.removeChatter(this);
+        channels.remove(c);
+        return true;
+    }
 
+    public void removeChannels() {
+        for (Channel c : channels) {
+            c.removeChatter(this);
+            channels.remove(c);
+        }
+    }
+
+    public void remove() {
+        removeChannels();
+        ChatterManager.getInstance().remove(this);
     }
 
     public Channel getFocus() {

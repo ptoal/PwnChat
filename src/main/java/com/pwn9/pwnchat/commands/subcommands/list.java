@@ -43,7 +43,7 @@ public class list extends SubCommand {
         Chatter chatter = null;
 
         if (sender instanceof Player) {
-            chatter = ChatterManager.getInstance().getOrCreateChatter((Player)sender);
+            chatter = ChatterManager.getInstance().getOrCreate((Player) sender);
         }
 
         String prefix;

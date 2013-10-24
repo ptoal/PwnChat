@@ -49,7 +49,7 @@ public class listen extends SubCommand {
             sender.sendMessage(PwnChat.PREFIX+" You always listen to the local server channel.");
         }
 
-        Chatter chatter = ChatterManager.getInstance().getOrCreateChatter((Player)sender);
+        Chatter chatter = ChatterManager.getInstance().getOrCreate((Player) sender);
         Channel channel = ChannelManager.getInstance().getChannel(args[1].toLowerCase());
 
         if (channel == null ) {

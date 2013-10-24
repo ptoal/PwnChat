@@ -35,7 +35,7 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
 
         Player p = event.getPlayer();
-        Chatter chatter = ChatterManager.getInstance().getOrCreateChatter(p);
+        Chatter chatter = ChatterManager.getInstance().getOrCreate(p);
 
         StringBuilder channelMessage = new StringBuilder();
 

@@ -12,6 +12,7 @@ package com.pwn9.pwnchat.listeners;
 
 import com.pwn9.pwnchat.Chatter;
 import com.pwn9.pwnchat.ChatterManager;
+import com.pwn9.pwnchat.LogManager;
 import com.pwn9.pwnchat.PwnChat;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,9 +36,10 @@ public class PlayerQuitListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent event) {
 
+        LogManager.getInstance().debugMedium("Removing Player: " + event.getPlayer().getName());
+        Chatter chatter = ChatterManager.getInstance().getOrCreate(event.getPlayer());
+        chatter.remove();
 
-        Chatter chatter = ChatterManager.getInstance().getOrCreateChatter(event.getPlayer());
-        ChatterManager.getInstance().removeChatter(chatter);
         /*
         Every time someone leaves, check to see how many players are online,
         and if there are more than 20 chatters over that number, clean out
@@ -57,7 +59,7 @@ public class PlayerQuitListener implements Listener {
 
             for (Chatter chatter : ChatterManager.getInstance().getAllChatters()) {
                if (!onlinePlayers.contains(chatter.getPlayer())) {
-                    ChatterManager.getInstance().removeChatter(chatter);
+                    ChatterManager.getInstance().remove(chatter);
                 }
             }
         }*/

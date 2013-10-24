@@ -22,6 +22,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -43,8 +44,12 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
     @Override
     public void reloadConfig() {
+        unregisterListeners();
         super.reloadConfig();
         ChannelManager.getInstance().setupChannels(this, config);
+        setupLog();
+        registerListeners();
+
     }
 
     public void onEnable() {
@@ -68,10 +73,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
         getCommand("pchat").setExecutor(new pchat(this));
 
-        new PlayerJoinListener(this);
-        new PlayerQuitListener(this);
-
-        ChatListener cl = new ChatListener(this);
+        registerListeners();
 
 //		if (config.Settings_FactionServer) {
 //			ListenerManager.getInstance().registerListener(new FactionChatListener(this), this);
@@ -89,9 +91,21 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
     getLogger().info("PwnFilter Dependency not found.  Disabling chat filtering.");
     }
 
+
+    private void registerListeners() {
+        new PlayerJoinListener(this);
+        new PlayerQuitListener(this);
+
+        ChatListener cl = new ChatListener(this);
+    }
+
+    private void unregisterListeners() {
+        HandlerList.unregisterAll(this);
+    }
+
     private void setupLog() {
         logManager = LogManager.getInstance();
-        logManager.start("pwnchat.log");
+        logManager.stop();
         LogManager.DebugModes dm;
         try {
             dm = LogManager.DebugModes.valueOf(config.Settings_debug);
@@ -99,6 +113,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
             dm = LogManager.DebugModes.off;
         }
         logManager.setDebugMode(dm);
+        logManager.start("pwnchat.log");
     }
 
     private boolean setupChat() {

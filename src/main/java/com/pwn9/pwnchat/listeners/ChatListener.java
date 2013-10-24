@@ -39,7 +39,7 @@ public class ChatListener implements Listener {
         if (event.isCancelled()) return;
 
         Player p = event.getPlayer();
-        Chatter chatter = ChatterManager.getInstance().getOrCreateChatter(p);
+        Chatter chatter = ChatterManager.getInstance().getOrCreate(p);
 
         // If using a shortcut, override the current channel focus
         Channel c = ChannelManager.getInstance().shortcutLookup(event.getMessage());

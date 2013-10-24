@@ -57,7 +57,7 @@ public class silence extends SubCommand {
             return true;
         }
 
-        Chatter chatter = ChatterManager.getInstance().getOrCreateChatter((Player)sender);
+        Chatter chatter = ChatterManager.getInstance().getOrCreate((Player) sender);
 
         if (channel.hasChatter(chatter)) {
             if (chatter.isFocused(channel)) {

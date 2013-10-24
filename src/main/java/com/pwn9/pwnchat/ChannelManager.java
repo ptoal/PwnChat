@@ -87,10 +87,10 @@ public class ChannelManager {
         return channels.containsKey(cName);
     }
 
-    public synchronized void add(Channel c) {
+    private synchronized void add(Channel c) {
 
         channels.put(c.getName(),c);
-        Channel old = shortcuts.put(c.getShortcut(),c);
+        Channel old = shortcuts.put(c.getShortcut(), c);
         if (old != null ) {
             LogManager.logger.warning("Overriding Shortcut: '" + c.getPrefix() + "'. Old channel: " +
             old.getName() + ", new channel: " + c.getName());
@@ -108,7 +108,9 @@ public class ChannelManager {
 
     }
 
+    /* Should only be called by a Channel instance after it has cleaned itself up. */
     public synchronized void remove(Channel c) {
+        if (c.hasChatters()) throw new IllegalStateException("Can't remove a channel with chatters! Channel: " + c.getName());
         shortcuts.remove(c.getShortcut());
         channels.remove(c.getName());
     }
@@ -150,7 +152,7 @@ public class ChannelManager {
             if (sender instanceof ConsoleCommandSender) {
                 channelList = ChannelManager.getInstance().getChannelList();
             } else if (sender instanceof Player){
-                Chatter chatter = ChatterManager.getInstance().getOrCreateChatter((Player)sender);
+                Chatter chatter = ChatterManager.getInstance().getOrCreate((Player) sender);
                 channelList = chatter.permittedChannels();
             } else {
                 channelList = Collections.emptyList();

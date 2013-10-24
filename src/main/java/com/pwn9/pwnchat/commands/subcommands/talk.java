@@ -39,7 +39,7 @@ public class talk extends SubCommand {
             sender.sendMessage(PwnChat.PREFIX + " Only players can execute this command.");
             return true;
         }
-        Chatter chatter = ChatterManager.getInstance().getOrCreateChatter((Player)sender);
+        Chatter chatter = ChatterManager.getInstance().getOrCreate((Player) sender);
 
         if (args.length < 2) {
             sender.sendMessage(getUsage());

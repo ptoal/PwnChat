@@ -137,29 +137,6 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
         }
     }
 
-//	public boolean onCommand(CommandSender sender, Command command,
-//			String label, String[] args) {
-//
-//			if (command.getName().equalsIgnoreCase("say")) {
-//				ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-//				DataOutputStream output = new DataOutputStream(bStream);
-//				try {
-//					output.writeUTF("Broadcast");
-//					output.writeUTF(message);
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//
-//				new PluginMessageTask(this, player, bStream).runTask(this);
-//				return true;
-//			}
-//		} else {
-//			Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "[Server] " + message);
-//			return true;
-//		}
-//		return false;
-//	}
-
 	public Chat getChat() {
 		return this.chat;
 	}

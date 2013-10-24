@@ -77,6 +77,7 @@
                 <version>2.4.1</version>
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <useReleaseProfile>false</useReleaseProfile>
                 </configuration>
             </plugin>
             <plugin>

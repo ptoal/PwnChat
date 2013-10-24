@@ -3,7 +3,7 @@
   <groupId>com.pwn9</groupId>
   <artifactId>PwnChat</artifactId>
   <name>PwnChat</name>
-  <version>1.0.3</version>
+  <version>1.0.4-SNAPSHOT</version>
 
     <profiles>
         <profile>
@@ -99,7 +99,7 @@
     <scm>
         <connection>scm:git:https://github.com/ptoal/PwnChat.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/ptoal/PwnChat.git</developerConnection>
-        <tag>v1.0.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <ciManagement>

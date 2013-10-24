@@ -3,7 +3,7 @@
   <groupId>com.pwn9</groupId>
   <artifactId>PwnChat</artifactId>
   <name>PwnChat</name>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.3-SNAPSHOT</version>
 
     <profiles>
         <profile>

@@ -195,7 +195,10 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
                     if (chatChannel == null) return; // Not for us.
                     LogManager.getInstance().debugMedium(String.format("[%s] <%s> (<%s>) %s", channelName, playerName, format, chatMessage));
 
-                    chatChannel.sendMessage(this, playerName, format, chatMessage);
+                    // This is a hack to get rid of unfilled tags.
+                    String cleanFormat = format.replaceAll("\\{([^\\}]+)\\}","");
+
+                    chatChannel.sendMessage(this, playerName, cleanFormat, chatMessage);
 
                 }
             }

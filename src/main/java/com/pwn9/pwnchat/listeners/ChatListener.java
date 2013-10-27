@@ -34,7 +34,7 @@ public class ChatListener implements Listener {
 //    @Override
     public String getShortName() { return "PWNCHAT"; }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 
         if (event.isCancelled()) return;

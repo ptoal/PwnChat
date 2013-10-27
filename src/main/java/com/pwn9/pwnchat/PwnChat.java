@@ -16,10 +16,11 @@ import com.pwn9.pwnchat.listeners.ChatListener;
 import com.pwn9.pwnchat.listeners.PlayerJoinListener;
 import com.pwn9.pwnchat.listeners.PlayerQuitListener;
 import com.pwn9.pwnchat.tasks.PluginMessageTask;
+import com.pwn9.pwnchat.utils.LogManager;
 import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -32,6 +33,7 @@ import java.io.*;
 public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
 	private Chat chat = null;
+    private Permission perms = null;
 	private PwnChatConfig config;
     private LogManager logManager;
 
@@ -67,6 +69,8 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
         setupChat();
 
+        setupPerms();
+
         setupBungeeChannels();
 
         ChannelManager.getInstance().setupChannels(this, config);
@@ -90,7 +94,6 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
     }
     getLogger().info("PwnFilter Dependency not found.  Disabling chat filtering.");
     }
-
 
     private void registerListeners() {
         new PlayerJoinListener(this);
@@ -127,6 +130,16 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 		return (chat != null);
 	}
 
+    private boolean setupPerms() {
+        RegisteredServiceProvider<Permission> permsProvider = getServer()
+                .getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permsProvider != null) {
+            perms = permsProvider.getProvider();
+        }
+
+        return (perms != null);
+    }
+
     private void setupBungeeChannels() {
         if (config.Settings_BungeeCord == true) {
             getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -141,27 +154,14 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 		return this.chat;
 	}
 
+    public Permission getPerms() {
+        return this.perms;
+    }
+
 	private void disable() {
 		Bukkit.getPluginManager().disablePlugin(this);
 
 	}
-
-    public String getFormat(CommandSender p, Channel c) {
-
-        //TODO: Implement Essesntials-style chat formatting, and vault affix support.
-        StringBuilder formatString = new StringBuilder();
-
-        if (c != null && !c.getPrefix().isEmpty()) {
-            formatString.append("[" + c.getPrefix() + "]");
-        }
-        if (chat != null && (p instanceof Player)) {
-            formatString.append(chat.getPlayerPrefix((Player)p)).append("%s").
-                    append(chat.getPlayerSuffix((Player)p)).append(":§r %s");
-        } else {
-            formatString.append("%s:§r %s");
-        }
-        return ChatColor.translateAlternateColorCodes('&',formatString.toString());
-    }
 
     @Override
     public void onPluginMessageReceived(String dataChannel, Player player, byte[] message) {
@@ -219,7 +219,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
              DataOutputStream msgout = new DataOutputStream(msgbytes);
              msgout.writeUTF("ChannelMessage");
              msgout.writeUTF(c.getName());
-             msgout.writeUTF(p.getName());
+             msgout.writeUTF(p.getDisplayName());
              msgout.writeUTF(format);
              msgout.writeUTF(message);
              out.writeShort(msgbytes.toByteArray().length);

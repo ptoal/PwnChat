@@ -12,7 +12,7 @@ package com.pwn9.pwnchat.listeners;
 
 import com.pwn9.pwnchat.Chatter;
 import com.pwn9.pwnchat.ChatterManager;
-import com.pwn9.pwnchat.LogManager;
+import com.pwn9.pwnchat.utils.LogManager;
 import com.pwn9.pwnchat.PwnChat;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

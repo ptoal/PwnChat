@@ -40,6 +40,7 @@ public class PwnChatConfig extends Config {
     public boolean Settings_BungeeCord = true;
     public String Settings_debug = "off";
     public String Settings_defaultChannel = "local";
+    public String Settings_defaultFormat = "&7[{GROUP}]&r {DISPLAYNAME}&7:&r {MESSAGE}";
 //	public boolean Settings_VaultSupport = true;
 //	public boolean Settings_FactionServer = false;
 //	public boolean Settings_CancelChatEvents = false;

@@ -1,4 +1,14 @@
-package com.pwn9.pwnchat;
+/*
+ * PwnChat -- A Bukkit/Spigot plugin for multi-channel cross-server (via bungeecord) chat.
+ * Copyright (c) 2013 Pwn9.com. Sage905 <ptoal@takeflight.ca>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
+ */
+
+package com.pwn9.pwnchat.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +97,7 @@ public class LogManager {
                 // For now, one logfile, like the old way.
                 String file =  new File(logFolder, fileName).toString();
                 logfileHandler = new FileHandler(file, true);
-                SimpleFormatter f = new PwnFormatter();
+                SimpleFormatter f = new LogFormatter();
                 logfileHandler.setFormatter(f);
                 logfileHandler.setLevel(Level.FINEST); // Catch all log messages
                 LogManager.logger.addHandler(logfileHandler);

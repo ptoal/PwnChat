@@ -10,11 +10,13 @@
 
 package com.pwn9.pwnchat;
 
+import com.pwn9.pwnchat.utils.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -32,6 +34,7 @@ public class Channel {
     private String description;
     private String prefix;
     private Character shortcut;
+    private MessageFormat format;
     private String permission = "";
     private boolean privateChannel = true;
     private Set<Chatter> chatters = Collections.newSetFromMap(new ConcurrentHashMap<Chatter,Boolean>());
@@ -43,6 +46,14 @@ public class Channel {
 
     public Collection<Chatter> getChatters() {
         return chatters;
+    }
+
+    public MessageFormat getFormat() {
+        return format;
+    }
+
+    public void setFormat(MessageFormat format) {
+        this.format = format;
     }
 
     public String getName() {

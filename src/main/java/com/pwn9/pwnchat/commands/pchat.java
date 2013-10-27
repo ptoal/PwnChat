@@ -14,9 +14,11 @@ import com.pwn9.pwnchat.Channel;
 import com.pwn9.pwnchat.ChannelManager;
 import com.pwn9.pwnchat.PwnChat;
 import com.pwn9.pwnchat.commands.subcommands.*;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import static org.bukkit.ChatColor.GOLD;
 
@@ -48,10 +50,10 @@ public class pchat extends BaseCommandExecutor {
                     for ( i = 1 ; i < args.length ; i++ ) {
                         message.append(args[i]).append(" ");
                     }
-                    String format = plugin.getFormat(sender, c);
-                    c.sendMessage(plugin,sender.getName(),format,message.toString().trim());
+                    // TODO: Fix this.
                     if (sender instanceof Player) {
-                        plugin.sendToChannel((Player)sender, c, format, message.toString().trim());
+                        AsyncPlayerChatEvent e = new AsyncPlayerChatEvent(false, (Player)sender, message.toString(), c.getRecipients());
+                        Bukkit.getServer().getPluginManager().callEvent(e);
                     }
                     return true;
                 }

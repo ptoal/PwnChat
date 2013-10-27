@@ -12,10 +12,13 @@ package com.pwn9.pwnchat;
 
 import com.pwn9.pwnchat.config.ConfigChannel;
 import com.pwn9.pwnchat.config.PwnChatConfig;
+import com.pwn9.pwnchat.utils.LogManager;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,6 +56,7 @@ public class ChannelManager {
             Channel chan = channels.get(channelEntry.getKey().toLowerCase());
             if (chan == null ) {
                 chan = new Channel(channelEntry.getKey());
+                p.getLogger().info("Updating Channel: " + chan.getName());
             }
 
             ConfigChannel configChannel = channelEntry.getValue();
@@ -63,18 +67,40 @@ public class ChannelManager {
             chan.setPrivate(configChannel.privacy);
             chan.setShortcut(configChannel.shortcut.charAt(0));
 
-            add(chan);
-            chan.registerBridge(); // Register this channel with the bridge
-
-            LogManager.logger.info("Configured Channel: " + chan.getName());
-
-            String defaultName = config.Settings_defaultChannel.toLowerCase();
-
-            if (ChannelManager.getInstance().exists(defaultName)) {
-                LogManager.logger.info("Setting Default Channel to: " + defaultName);
-                defaultChannel = channels.get(defaultName);
+            String format;
+            if (configChannel.format != null && !configChannel.format.isEmpty()) {
+                format = configChannel.format;
+            } else {
+                format = config.Settings_defaultFormat;
             }
 
+            format = ChatColor.translateAlternateColorCodes('&',format);
+
+            format = format.replace("{DISPLAYNAME}", "%1$s")
+                .replace("{MESSAGE}", "%2$s")
+                .replace("{GROUP}", "{0}")
+                .replace("{WORLDNAME}", "{1}")
+                .replace("{TEAMPREFIX}", "{2}")
+                .replace("{TEAMSUFFIX}", "{3}")
+                .replace("{TEAMNAME}", "{4}")
+                .replace("{CHANNELPREFIX}", "{5}");
+            format = "§r".concat(format);
+            chan.setFormat(new MessageFormat(format));
+            LogManager.getInstance().debugMedium("Channel: " + chan.getName() + " Format: " + chan.getFormat().toPattern());
+
+
+            save(chan);
+            chan.registerBridge(); // Register this channel with the bridge
+
+            LogManager.logger.info("Channel Active: " + chan.getName());
+
+        }
+
+        String defaultName = config.Settings_defaultChannel.toLowerCase();
+
+        if (ChannelManager.getInstance().exists(defaultName)) {
+            LogManager.logger.info("Setting Default Channel to: " + defaultName);
+            defaultChannel = channels.get(defaultName);
         }
 
     }
@@ -87,11 +113,11 @@ public class ChannelManager {
         return channels.containsKey(cName);
     }
 
-    private synchronized void add(Channel c) {
+    private synchronized void save(Channel c) {
 
         channels.put(c.getName(),c);
         Channel old = shortcuts.put(c.getShortcut(), c);
-        if (old != null ) {
+        if (old != null && old != c) {
             LogManager.logger.warning("Overriding Shortcut: '" + c.getPrefix() + "'. Old channel: " +
             old.getName() + ", new channel: " + c.getName());
         }

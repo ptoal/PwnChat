@@ -11,6 +11,7 @@
 package com.pwn9.pwnchat.listeners;
 
 import com.pwn9.pwnchat.*;
+import com.pwn9.pwnchat.utils.ChannelFormat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,14 +40,17 @@ public class ChatListener implements Listener {
         if (event.isCancelled()) return;
 
         Player p = event.getPlayer();
+        String message = event.getMessage();
         Chatter chatter = ChatterManager.getInstance().getOrCreate(p);
 
         // If using a shortcut, override the current channel focus
-        Channel c = ChannelManager.getInstance().shortcutLookup(event.getMessage());
+        Channel c = ChannelManager.getInstance().shortcutLookup(message);
 
         // If not using shortcut, try channel focus.
         if (c == null) {
             c = chatter.getFocus();
+        } else {
+            message = message.substring(1);
         }
 
         // If no channel, then return, as we're just going to let the local chat
@@ -61,19 +65,14 @@ public class ChatListener implements Listener {
             chatter.setFocus(null);
             return;
         }
-
-        // Build the format string
-        StringBuilder formatString = new StringBuilder();
-
-        // Prepend the channel prefix
-        formatString.append("[").append(c.getPrefix()).append("]").append(event.getFormat());
-
-        event.setFormat(formatString.toString());
+        String format = ChannelFormat.getFormat(p, c, plugin);
+        event.setFormat(format);
 
         if (c.isPrivateChannel()) {
             event.setCancelled(true);
-            c.sendMessage(plugin,p.getName(),formatString.toString(),event.getMessage());
+            c.sendMessage(plugin,p.getDisplayName(),format,message);
         } else {
+            event.setMessage(message);
             Set<Player> recipientList = event.getRecipients();
 
             try  {
@@ -85,7 +84,7 @@ public class ChatListener implements Listener {
                 return;
             }
         }
-        plugin.sendToChannel(p,c,formatString.toString(), event.getMessage());
+        plugin.sendToChannel(p,c,format, message);
 
 	}
 

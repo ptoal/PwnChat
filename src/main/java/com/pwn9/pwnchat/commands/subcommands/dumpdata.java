@@ -12,6 +12,7 @@ package com.pwn9.pwnchat.commands.subcommands;
 
 import com.pwn9.pwnchat.*;
 import com.pwn9.pwnchat.commands.SubCommand;
+import com.pwn9.pwnchat.utils.LogManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.logging.Logger;

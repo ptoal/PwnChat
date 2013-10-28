@@ -2,7 +2,7 @@ name: PwnChat
 author: Sage905
 main: com.pwn9.pwnchat.PwnChat
 version: ${pwnchat.version}
-softdepend: [Vault, PwnFilter]
+softdepend: [Vault, PwnFilter, Factions]
 
 commands:
   pchat:

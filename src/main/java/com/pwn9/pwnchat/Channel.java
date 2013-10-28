@@ -150,10 +150,12 @@ public class Channel {
         this.privateChannel = privateChannel;
     }
 
-    public void sendMessage(final Plugin p, final String playerName, final String format, final String chatMessage) {
+    public void sendMessage(final Plugin p, final String playerDisplayName, final String format, final String chatMessage, final String playerName) {
         StringBuilder recipients = new StringBuilder();
         for (Player r : getRecipients()) { recipients.append(r.getName()).append(" "); }
         LogManager.getInstance().debugMedium("Sending message: " + chatMessage + " to [" + recipients.toString().trim() + "]");
+
+        final Set<Player> recipientList = getRecipients();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(p, new BukkitRunnable() {
             @Override
@@ -162,7 +164,7 @@ public class Channel {
                 // For now, just send the message to players directly.
                 for (Player p : getRecipients() ) {
                     p.sendMessage(String.format(format,
-                            playerName,chatMessage));
+                            playerDisplayName,chatMessage));
                 }
             }
         });

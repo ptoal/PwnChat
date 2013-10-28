@@ -187,18 +187,19 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
                 if (command.equals("ChannelMessage")) {
 
                     final String channelName = msgin.readUTF(); // Get the channel name.
-                    final String playerName = msgin.readUTF();
+                    final String playerDisplayName = msgin.readUTF();
                     final String format = msgin.readUTF();
                     final String chatMessage = msgin.readUTF();
+                    final String playerName = msgin.readUTF();
 
                     final Channel chatChannel = ChannelManager.getInstance().getChannel(channelName);
                     if (chatChannel == null) return; // Not for us.
-                    LogManager.getInstance().debugMedium(String.format("[%s] <%s> (<%s>) %s", channelName, playerName, format, chatMessage));
+                    LogManager.getInstance().debugMedium(String.format("[%s] <%s> (<%s>) %s", channelName, playerDisplayName, format, chatMessage));
 
                     // This is a hack to get rid of unfilled tags.
                     String cleanFormat = format.replaceAll("\\{([^\\}]+)\\}","");
 
-                    chatChannel.sendMessage(this, playerName, cleanFormat, chatMessage);
+                    chatChannel.sendMessage(this, playerDisplayName, cleanFormat, chatMessage, playerName);
 
                 }
             }
@@ -225,6 +226,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
              msgout.writeUTF(p.getDisplayName());
              msgout.writeUTF(format);
              msgout.writeUTF(message);
+             msgout.writeUTF(p.getName());
              out.writeShort(msgbytes.toByteArray().length);
              out.write(msgbytes.toByteArray());
          } catch ( IOException ex) {

@@ -108,6 +108,10 @@ public class Channel {
         ChannelManager.getInstance().remove(this);
     }
 
+    public void save() {
+        ChannelManager.getInstance().save(this, false);
+    }
+
     public boolean removeChatter(Chatter c) {
         this.chatters.remove(c);
         this.recipients.remove(c.getPlayer());
@@ -127,10 +131,16 @@ public class Channel {
     }
 
     public boolean hasPermission(Chatter c) {
-        if (c == null || this.permission.isEmpty()) return true;
 
-        Player p = Bukkit.getPlayer(c.getPlayerName());
-        return p.hasPermission(permission);
+        // If we don't have a chatter, then we're probably the console.
+        if (c == null ) return true;
+
+        if (this.permission.isEmpty()) {
+            return true;
+        } else {
+            Player p = Bukkit.getPlayer(c.getPlayerName());
+            return p.hasPermission(permission);
+        }
     }
 
     public boolean hasChatter(Chatter c) {
@@ -178,4 +188,5 @@ public class Channel {
     public void setShortcut(Character shortcut) {
         this.shortcut = shortcut;
     }
+
 }

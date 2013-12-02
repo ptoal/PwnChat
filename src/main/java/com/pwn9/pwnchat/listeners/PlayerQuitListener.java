@@ -12,12 +12,18 @@ package com.pwn9.pwnchat.listeners;
 
 import com.pwn9.pwnchat.Chatter;
 import com.pwn9.pwnchat.ChatterManager;
-import com.pwn9.pwnchat.utils.LogManager;
 import com.pwn9.pwnchat.PwnChat;
+import com.pwn9.pwnchat.factions.FactionChannel;
+import com.pwn9.pwnchat.utils.LogManager;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Listen for Player join events and set up their default channels.
@@ -37,8 +43,6 @@ public class PlayerQuitListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
 
         LogManager.getInstance().debugMedium("Removing Player: " + event.getPlayer().getName());
-        Chatter chatter = ChatterManager.getInstance().getOrCreate(event.getPlayer());
-        chatter.remove();
 
         /*
         Every time someone leaves, check to see how many players are online,
@@ -49,19 +53,24 @@ public class PlayerQuitListener implements Listener {
         at the same time caching the players joined channels for a little while.
 
         TODO: Synchronize player channels / settings across servers.
-        TODO: Make the code below work without removing players from channels when someone else logs out!
         */
 
-/*        List<Player> onlinePlayers = new ArrayList<Player>(Arrays.asList(plugin.getServer().getOnlinePlayers()));
+        List<Player> onlinePlayers = new ArrayList<Player>(Arrays.asList(plugin.getServer().getOnlinePlayers()));
 
-        if (ChatterManager.getInstance().getAllChatters().size() -
+        if (ChatterManager.getInstance().getAll().size() -
                 onlinePlayers.size() > 20 ) {
 
-            for (Chatter chatter : ChatterManager.getInstance().getAllChatters()) {
+            for (Chatter chatter : ChatterManager.getInstance().getAll()) {
                if (!onlinePlayers.contains(chatter.getPlayer())) {
-                    ChatterManager.getInstance().remove(chatter);
+                   chatter.removeChannels();
+                   ChatterManager.getInstance().remove(chatter);
                 }
             }
-        }*/
+        }
+
+        // Check to see if any Factions Channels are empty, and if so, remove them.
+        if (plugin.factionsEnabled()) {
+            FactionChannel.removeEmptyFactionsChannels();
+        }
     }
 }

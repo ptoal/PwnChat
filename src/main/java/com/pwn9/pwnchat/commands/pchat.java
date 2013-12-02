@@ -44,7 +44,7 @@ public class pchat extends BaseCommandExecutor {
 
         if (args.length > 1) {
             for (Channel c : ChannelManager.getInstance().getChannelList()) {
-                if (c.getPrefix().equalsIgnoreCase(args[0]) && sender.hasPermission(c.getPermission())) {
+                if (c.getPrefix() != null && c.getPrefix().equalsIgnoreCase(args[0]) && sender.hasPermission(c.getPermission())) {
                     int i;
                     StringBuilder message = new StringBuilder();
                     for ( i = 1 ; i < args.length ; i++ ) {

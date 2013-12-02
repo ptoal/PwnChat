@@ -29,7 +29,7 @@ public class talk extends SubCommand {
     public talk(PwnChat instance) {
         super(instance,"talk");
         setUsage("talk <channel>");
-        setDescription("Change your default channel.");
+        setDescription("Change your default talk channel. Use 'faction' for faction chat.");
         setPermission("pwnchat.talk");
     }
 
@@ -43,6 +43,15 @@ public class talk extends SubCommand {
 
         if (args.length < 2) {
             sender.sendMessage(getUsage());
+            return true;
+        }
+
+        if (plugin.getPwnChatConfig().Settings_Factions && args[1].equalsIgnoreCase("faction")) {
+            if (chatter.setFocusFaction()) {
+                sender.sendMessage(PwnChat.PREFIX + " You are now talking in the channel for faction: "+ chatter.getFocus().getName());
+            } else {
+                sender.sendMessage(PwnChat.PREFIX + " Unable to set your faction chat channel (Are you in a faction?).");
+            }
             return true;
         }
 

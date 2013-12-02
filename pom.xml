@@ -195,6 +195,19 @@
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
+  <dependency>
+      <groupId>com.massivecraft</groupId>
+      <artifactId>factions</artifactId>
+      <version>2.2.1</version>
+      <scope>compile</scope>
+  </dependency>
+      <dependency>
+          <groupId>com.massivecraft</groupId>
+          <artifactId>mcore</artifactId>
+          <version>6.8.1</version>
+          <scope>compile</scope>
+      </dependency>
+
     <!--<dependency>-->
         <!--<groupId>net.ess3</groupId>-->
         <!--<artifactId>Essentials</artifactId>-->

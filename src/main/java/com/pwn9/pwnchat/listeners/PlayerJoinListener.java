@@ -11,6 +11,7 @@
 package com.pwn9.pwnchat.listeners;
 
 import com.pwn9.pwnchat.*;
+import com.pwn9.pwnchat.factions.FactionChannel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,11 +40,16 @@ public class PlayerJoinListener implements Listener {
 
         StringBuilder channelMessage = new StringBuilder();
 
-        for (Channel c: ChannelManager.getInstance().getChannelList()) {
-            if(chatter.addChannel(c)) {
-                channelMessage.append(c.getName()).append(",");
-            }
+        if (plugin.factionsEnabled()) {
+            FactionChannel.getOrCreateFactionsChannel(chatter);
         }
+
+        for (Channel c: ChannelManager.getInstance().getChannelList())
+            chatter.addChannel(c);
+
+        for (Channel c: chatter.getChannels())
+            channelMessage.append(c.getName()).append(",");
+
         Channel defaultChannel = ChannelManager.getInstance().getDefaultChannel();
         if (defaultChannel != null) {
             chatter.setFocus(defaultChannel);

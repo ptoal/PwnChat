@@ -38,11 +38,14 @@ public class PwnChatConfig extends Config {
 	}
 
     public boolean Settings_BungeeCord = true;
+    public boolean Settings_Factions = true;
     public String Settings_debug = "off";
     public String Settings_defaultChannel = "local";
     public String Settings_defaultFormat = "&7[{GROUP}]&r {DISPLAYNAME}&7:&r {MESSAGE}";
+    public String Settings_defaultFactionFormat = "&7[{CHANNELPREFIX}]&r {factions_roleprefix}&r&7{factions_name|rp}&r {DISPLAYNAME}&7:&r {MESSAGE}";
+    public String Settings_factionShortcut = ".";
+
 //	public boolean Settings_VaultSupport = true;
-//	public boolean Settings_FactionServer = false;
 //	public boolean Settings_CancelChatEvents = false;
 //	public boolean BroadcastToAllServers = false;
 

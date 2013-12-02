@@ -44,7 +44,7 @@ public class ChatListener implements Listener {
         Chatter chatter = ChatterManager.getInstance().getOrCreate(p);
 
         // If using a shortcut, override the current channel focus
-        Channel c = ChannelManager.getInstance().shortcutLookup(message);
+        Channel c = ChannelManager.getInstance().shortcutLookup(message, chatter);
 
         // If not using shortcut, try channel focus.
         if (c == null) {
@@ -57,7 +57,7 @@ public class ChatListener implements Listener {
         // handle it. TODO: Modify this when we take over formatting.
         if (c == null || c.equals(ChannelManager.getInstance().getLocal())) return;
 
-        if (!p.hasPermission(c.getPermission())) {
+        if (!c.hasPermission(chatter)) {
             // They don't have permission for this channel anymore.
             // Remove them from the channel, and dump them back in
             // Local chat
@@ -70,7 +70,7 @@ public class ChatListener implements Listener {
 
         if (c.isPrivateChannel()) {
             event.setCancelled(true);
-            c.sendMessage(plugin,p.getDisplayName(),format,message);
+            c.sendMessage(plugin,p.getDisplayName(),format,message, p.getName());
         } else {
             event.setMessage(message);
             Set<Player> recipientList = event.getRecipients();

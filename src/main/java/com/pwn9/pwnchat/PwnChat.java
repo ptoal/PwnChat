@@ -10,6 +10,7 @@
 
 package com.pwn9.pwnchat;
 
+import com.massivecraft.factions.Factions;
 import com.pwn9.pwnchat.commands.pchat;
 import com.pwn9.pwnchat.config.PwnChatConfig;
 import com.pwn9.pwnchat.listeners.ChatListener;
@@ -24,6 +25,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -34,6 +36,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
 	private Chat chat = null;
     private Permission perms = null;
+    private Factions factions = null;
 	private PwnChatConfig config;
     private LogManager logManager;
 
@@ -49,6 +52,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
         unregisterListeners();
         super.reloadConfig();
         ChannelManager.getInstance().setupChannels(this, config);
+        setupFactions();
         setupLog();
         registerListeners();
 
@@ -71,6 +75,8 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
         setupPerms();
 
+        setupFactions();
+
         setupBungeeChannels();
 
         ChannelManager.getInstance().setupChannels(this, config);
@@ -79,13 +85,27 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
         registerListeners();
 
-//		if (config.Settings_FactionServer) {
-//			ListenerManager.getInstance().registerListener(new FactionChatListener(this), this);
-//		} else {
-//            ListenerManager.getInstance().registerListener(new ChatListener(this), this);
-//		}
+    }
 
-	}
+    private void setupFactions() {
+        if (config.Settings_Factions) {
+            Plugin fPlugin = getServer().getPluginManager().getPlugin("Factions");
+            if (fPlugin != null && fPlugin instanceof Factions) {
+                factions = (Factions)fPlugin;
+                getLogger().info("Factions detected. Enabling Factions Chat.");
+            } else {
+                factions = null;
+                getLogger().info("Factions not found.  Factions Chat disabled.");
+            }
+        } else {
+            factions = null;
+        }
+    }
+
+    public boolean factionsEnabled() {
+        return factions != null;
+    }
+
     //TODO: See what happens when Pwnfilter gets disabled while we're running!
 
     public void setupPwnFilter() {
@@ -156,6 +176,10 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
     public Permission getPerms() {
         return this.perms;
+    }
+
+    public PwnChatConfig getPwnChatConfig() {
+        return config;
     }
 
 	private void disable() {

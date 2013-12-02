@@ -10,6 +10,7 @@
 
 package com.pwn9.pwnchat;
 
+import com.pwn9.pwnchat.factions.FactionChannel;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class Chatter {
     }
 
     public boolean addChannel(Channel c) {
+        if (!c.hasPermission(this)) return false;
         if (c.addChatter(this)) {
             channels.add(c);
             return true;
@@ -87,6 +89,15 @@ public class Chatter {
 
     public void setFocus(Channel focus) {
         this.focus = focus;
+    }
+
+    public boolean setFocusFaction() {
+        Channel fChannel = FactionChannel.getForChatter(this);
+        if (fChannel != null) {
+            setFocus(fChannel);
+            return true;
+        }
+        return false;
     }
 
     public boolean isFocused(Channel c) {

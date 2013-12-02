@@ -12,6 +12,7 @@ package com.pwn9.pwnchat;
 
 import com.pwn9.pwnchat.config.ConfigChannel;
 import com.pwn9.pwnchat.config.PwnChatConfig;
+import com.pwn9.pwnchat.factions.FactionChannel;
 import com.pwn9.pwnchat.utils.LogManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -35,6 +36,7 @@ public class ChannelManager {
     private HashMap<Character, Channel> shortcuts = new HashMap<Character,Channel>();
     private Channel local;
     private Channel defaultChannel;
+    private PwnChat plugin;
 
     private ChannelManager() {}
 
@@ -47,8 +49,13 @@ public class ChannelManager {
     }
 
     public void setupChannels(PwnChat p, PwnChatConfig config) {
+
         // Always make sure the local channel is set up.
+        this.plugin = p;
         getLocal();
+
+        FactionChannel.setupFactionsDefaults(p,config);
+
         p.getLogger().info("Configured Channel: " + local.getName());
 
 
@@ -74,22 +81,12 @@ public class ChannelManager {
                 format = config.Settings_defaultFormat;
             }
 
-            format = ChatColor.translateAlternateColorCodes('&',format);
+            chan.setFormat(parseFormat(format));
 
-            format = format.replace("{DISPLAYNAME}", "%1$s")
-                .replace("{MESSAGE}", "%2$s")
-                .replace("{GROUP}", "{0}")
-                .replace("{WORLDNAME}", "{1}")
-                .replace("{TEAMPREFIX}", "{2}")
-                .replace("{TEAMSUFFIX}", "{3}")
-                .replace("{TEAMNAME}", "{4}")
-                .replace("{CHANNELPREFIX}", "{5}");
-            format = "§r".concat(format);
-            chan.setFormat(new MessageFormat(format));
             LogManager.getInstance().debugMedium("Channel: " + chan.getName() + " Format: " + chan.getFormat().toPattern());
 
 
-            save(chan);
+            save(chan, false);
             chan.registerBridge(); // Register this channel with the bridge
 
             LogManager.logger.info("Channel Active: " + chan.getName());
@@ -105,6 +102,23 @@ public class ChannelManager {
 
     }
 
+    public static MessageFormat parseFormat(String format) {
+        format = format.replace("{DISPLAYNAME}", "%1$s")
+                .replace("{MESSAGE}", "%2$s")
+                .replace("{GROUP}", "{0}")
+                .replace("{WORLDNAME}", "{1}")
+                .replace("{TEAMPREFIX}", "{2}")
+                .replace("{TEAMSUFFIX}", "{3}")
+                .replace("{TEAMNAME}", "{4}")
+                .replace("{CHANNELPREFIX}", "{5}")
+                .replaceAll("\\{factions_roleprefix[^}]*}","{6}")
+                .replaceAll("\\{factions_name[^}]*}", "{7}");
+        format = "§r".concat(format);
+        format = ChatColor.translateAlternateColorCodes('&',format);
+
+        return new MessageFormat(format);
+    }
+
     public Channel getDefaultChannel() {
         return defaultChannel;
     }
@@ -113,13 +127,17 @@ public class ChannelManager {
         return channels.containsKey(cName);
     }
 
-    private synchronized void save(Channel c) {
+    public synchronized boolean save(Channel c, boolean overwrite) {
+        if (channels.get(c.getName().toLowerCase())!=null && !overwrite) return false;
 
-        channels.put(c.getName(),c);
-        Channel old = shortcuts.put(c.getShortcut(), c);
-        if (old != null && old != c) {
-            LogManager.logger.warning("Overriding Shortcut: '" + c.getPrefix() + "'. Old channel: " +
-            old.getName() + ", new channel: " + c.getName());
+        channels.put(c.getName().toLowerCase(),c);
+
+        if (c.getShortcut()!= null) {
+            Channel old = shortcuts.put(c.getShortcut(), c);
+            if (old != null && old != c) {
+                LogManager.logger.warning("Overriding Shortcut: '" + c.getPrefix() + "'. Old channel: " +
+                old.getName() + ", new channel: " + c.getName());
+            }
         }
 
         //Debugging
@@ -132,25 +150,28 @@ public class ChannelManager {
         sb.append(" Shortcut: " + c.getShortcut());
         LogManager.getInstance().debugMedium(sb.toString());
 
+        return true;
+
     }
 
     /* Should only be called by a Channel instance after it has cleaned itself up. */
     public synchronized void remove(Channel c) {
         if (c.hasChatters()) throw new IllegalStateException("Can't remove a channel with chatters! Channel: " + c.getName());
         shortcuts.remove(c.getShortcut());
-        channels.remove(c.getName());
+        channels.remove(c.getName().toLowerCase());
     }
 
     public Channel getChannel(String name) {
-        return channels.get(name);
+        return channels.get(name.toLowerCase());
     }
 
     public Collection<Channel> getChannelList() {
         return channels.values();
     }
 
-    public Channel shortcutLookup(String s) {
-      return shortcuts.get(s.charAt(0));
+    public Channel shortcutLookup(String s, Chatter c) {
+        if (s.charAt(0) == FactionChannel.getFactionsShortcut()) return FactionChannel.getForChatter(c);
+        return shortcuts.get(s.charAt(0));
     }
 
     public Channel getLocal() {
@@ -194,6 +215,11 @@ public class ChannelManager {
 
         return completions;
 
+
+    }
+
+    public PwnChat getPlugin() {
+        return plugin;
     }
 
 }

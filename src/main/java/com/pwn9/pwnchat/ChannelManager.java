@@ -112,7 +112,8 @@ public class ChannelManager {
                 .replace("{TEAMNAME}", "{4}")
                 .replace("{CHANNELPREFIX}", "{5}")
                 .replaceAll("\\{factions_roleprefix[^}]*}","{6}")
-                .replaceAll("\\{factions_name[^}]*}", "{7}");
+                .replaceAll("\\{factions_name[^}]*}", "{7}")
+                .replaceAll("(\\{[^0-9}]*})","'$1'");
         format = "§r".concat(format);
         format = ChatColor.translateAlternateColorCodes('&',format);
 
@@ -141,14 +142,10 @@ public class ChannelManager {
         }
 
         //Debugging
-        StringBuilder sb = new StringBuilder();
-        sb.append("Configuring Channel <" + c.getName() + ">");
-        sb.append(" Description: " + c.getDescription());
-        sb.append(" Permission: " + c.getPermission());
-        sb.append(" Prefix: " + c.getPrefix());
-        sb.append(" Privacy: " + c.isPrivateChannel());
-        sb.append(" Shortcut: " + c.getShortcut());
-        LogManager.getInstance().debugMedium(sb.toString());
+        LogManager.getInstance().debugMedium(("Configuring Channel <" + c.getName() + ">")
+                + " Description: " + c.getDescription() + " Permission: " +
+                c.getPermission() + " Prefix: " + c.getPrefix() + " Privacy: " +
+                c.isPrivateChannel() + " Shortcut: " + c.getShortcut());
 
         return true;
 

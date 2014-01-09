@@ -87,8 +87,8 @@ public class Chatter {
         return focus;
     }
 
-    public void setFocus(Channel focus) {
-        this.focus = focus;
+    public Channel setFocus(Channel focus) {
+        return this.focus = focus;
     }
 
     public boolean setFocusFaction() {

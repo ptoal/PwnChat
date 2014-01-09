@@ -12,6 +12,7 @@ package com.pwn9.pwnchat.listeners;
 
 import com.pwn9.pwnchat.*;
 import com.pwn9.pwnchat.utils.ChannelFormat;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +24,7 @@ import java.util.Set;
 public class ChatListener implements Listener {
 	
 	private PwnChat plugin;
-    private boolean active;
+//    private boolean active;
 	
 	public ChatListener(PwnChat plugin) {
 		this.plugin = plugin;
@@ -35,12 +36,22 @@ public class ChatListener implements Listener {
     public String getShortName() { return "PWNCHAT"; }
 
     @EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerChat(AsyncPlayerChatEvent event) {
+	public void onPlayerChatLowest(AsyncPlayerChatEvent event) {
 
         if (event.isCancelled()) return;
 
         Player p = event.getPlayer();
         String message = event.getMessage();
+
+        if (p.hasPermission("essentials.chat.color")) {
+            message = ChatColor.translateAlternateColorCodes('&',message);
+        }
+
+        if (!p.hasPermission("essentials.chat.magic")) {
+            final String MAGICCODE = "" + ChatColor.COLOR_CHAR + ChatColor.MAGIC;
+            message = message.replaceAll(MAGICCODE,"");
+        }
+
         Chatter chatter = ChatterManager.getInstance().getOrCreate(p);
 
         // If using a shortcut, override the current channel focus
@@ -49,22 +60,24 @@ public class ChatListener implements Listener {
         // If not using shortcut, try channel focus.
         if (c == null) {
             c = chatter.getFocus();
+            if (c == null) { // If still null, set local }
+                c = ChannelManager.getInstance().getLocal();
+            }
         } else {
             message = message.substring(1);
         }
-
-        // If no channel, then return, as we're just going to let the local chat
-        // handle it. TODO: Modify this when we take over formatting.
-        if (c == null || c.equals(ChannelManager.getInstance().getLocal())) return;
 
         if (!c.hasPermission(chatter)) {
             // They don't have permission for this channel anymore.
             // Remove them from the channel, and dump them back in
             // Local chat
             chatter.removeChannel(c);
-            chatter.setFocus(null);
+            Channel defaultChannel = chatter.setFocus(ChannelManager.getInstance().getDefaultChannel());
+            p.sendMessage("You don't have permission to be in the '"+c.getName()+"' channel anymore.");
+            p.sendMessage("Returning you to the default channel: "+ defaultChannel.getName());
             return;
         }
+
         String format = ChannelFormat.getFormat(p, c, plugin);
         event.setFormat(format);
 
@@ -77,20 +90,36 @@ public class ChatListener implements Listener {
 
             try  {
                 recipientList.clear();
-                recipientList.addAll(c.getRecipients());
+                Set channelRecipients = c.getPermittedRecipients(p);
+                if (channelRecipients == null) {
+                    event.setCancelled(true);
+                } else {
+                    recipientList.addAll(channelRecipients);
+                }
+
             } catch (UnsupportedOperationException ex) {
                 plugin.getLogger().warning("Caught an exception while trying to manipulate recipients list: "+ex.getMessage());
                 event.setCancelled(true);
                 return;
             }
         }
+
         plugin.sendToChannel(p,c,format, message);
 
 	}
 
-    /**
-     * @return The primary rulechain for this filter
-     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerChatHighest(AsyncPlayerChatEvent event) {
+        // Clean up any stray tags.
+
+        String format = event.getFormat();
+        event.setFormat(format.replaceAll("\\{\\S*\\}",""));
+
+    }
+
+//    /**
+//     * @return The primary rulechain for this filter
+//     */
 //    @Override
 //    public RuleChain getRuleChain() {
 //        return chatRuleChain;

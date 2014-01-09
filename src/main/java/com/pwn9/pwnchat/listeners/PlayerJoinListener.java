@@ -50,10 +50,8 @@ public class PlayerJoinListener implements Listener {
         for (Channel c: chatter.getChannels())
             channelMessage.append(c.getName()).append(",");
 
-        Channel defaultChannel = ChannelManager.getInstance().getDefaultChannel();
-        if (defaultChannel != null) {
-            chatter.setFocus(defaultChannel);
-        }
+        chatter.setFocus(ChannelManager.getInstance().getDefaultChannel());
+
         channelMessage.deleteCharAt(channelMessage.length()-1);
         event.getPlayer().sendMessage(PwnChat.PREFIX + " Listening to: " + channelMessage.toString());
 

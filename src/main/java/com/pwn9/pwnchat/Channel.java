@@ -10,6 +10,8 @@
 
 package com.pwn9.pwnchat;
 
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 import com.pwn9.pwnchat.utils.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,10 +19,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+
+import static com.earth2me.essentials.I18n._;
 
 /**
  * Chat Channel
@@ -144,12 +147,69 @@ public class Channel {
     }
 
     public boolean hasChatter(Chatter c) {
-        if (c == null) return false;
-        return chatters.contains(c);
+        return c != null && chatters.contains(c);
     }
 
     public Set<Player> getRecipients() {
-        return recipients;
+        return new HashSet<Player>(recipients);
+    }
+
+    /**
+     * Get a list of recipients that want this message.  The list is composed
+     * of all the players Listening to the channel minus anyone who has muted
+     * the sender of the message.
+     *
+     * @param player Player who is sending this message
+     * @return Set containing Players who should receive the message.  Null if
+     * the sending player is muted.
+     */
+    public Set<Player> getPermittedRecipients(Player player) {
+        final Set<Player> retVal = getRecipients();
+        if (player == null) return retVal;
+
+        Essentials ess = PwnChat.getEssentials();
+
+        final User user;
+
+        if (ess != null) {
+            user = ess.getUser(player);
+        } else {
+            user = null;
+        }
+
+        if (user == null) {
+            return retVal;
+        } else {
+            if (user.isMuted())
+            {
+                user.sendMessage(_("voiceSilenced"));
+                return null;
+            }
+            try
+            {
+                final Iterator<Player> it = retVal.iterator();
+                while (it.hasNext())
+                {
+                    final User u = ess.getUser(it.next());
+                    if (u.isIgnoredPlayer(user))
+                    {
+                        it.remove();
+                    }
+                }
+            }
+            catch (UnsupportedOperationException ex)
+            {
+                if (ess.getSettings().isDebug())
+                {
+                    ess.getLogger().log(Level.INFO, "Ignore could not block chat due to custom chat plugin event.", ex);
+                }
+                else
+                {
+                    ess.getLogger().info("Ignore could not block chat due to custom chat plugin event.");
+                }
+            }
+        }
+        return retVal;
     }
 
     public boolean isPrivateChannel() {

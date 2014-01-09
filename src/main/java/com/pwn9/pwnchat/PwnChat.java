@@ -10,6 +10,7 @@
 
 package com.pwn9.pwnchat;
 
+import com.earth2me.essentials.Essentials;
 import com.massivecraft.factions.Factions;
 import com.pwn9.pwnchat.commands.pchat;
 import com.pwn9.pwnchat.config.PwnChatConfig;
@@ -39,6 +40,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
     private Factions factions = null;
 	private PwnChatConfig config;
     private LogManager logManager;
+    private static Essentials ess = null;
 
     public static final String PREFIX = ChatColor.YELLOW + "[PwnChat]";
 
@@ -79,6 +81,8 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
         setupBungeeChannels();
 
+        setupEssentials();
+
         ChannelManager.getInstance().setupChannels(this, config);
 
         getCommand("pchat").setExecutor(new pchat(this));
@@ -108,12 +112,12 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 
     //TODO: See what happens when Pwnfilter gets disabled while we're running!
 
-    public void setupPwnFilter() {
-    if (getServer().getPluginManager().getPlugin("PwnFilter") != null) {
-
-    }
-    getLogger().info("PwnFilter Dependency not found.  Disabling chat filtering.");
-    }
+//    public void setupPwnFilter() {
+//    if (getServer().getPluginManager().getPlugin("PwnFilter") != null) {
+//
+//    }
+//    getLogger().info("PwnFilter Dependency not found.  Disabling chat filtering.");
+//    }
 
     private void registerListeners() {
         new PlayerJoinListener(this);
@@ -139,6 +143,10 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
         logManager.start("pwnchat.log");
     }
 
+    private void setupEssentials() {
+        ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+    }
+
     private boolean setupChat() {
 		RegisteredServiceProvider<Chat> chatProvider = getServer()
 				.getServicesManager().getRegistration(
@@ -161,7 +169,7 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
     }
 
     private void setupBungeeChannels() {
-        if (config.Settings_BungeeCord == true) {
+        if (config.Settings_BungeeCord) {
             getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
             getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
         } else {
@@ -173,6 +181,8 @@ public class PwnChat extends JavaPlugin implements PluginMessageListener {
 	public Chat getChat() {
 		return this.chat;
 	}
+
+    public static Essentials getEssentials() { return ess; }
 
     public Permission getPerms() {
         return this.perms;

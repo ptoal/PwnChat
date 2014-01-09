@@ -52,7 +52,9 @@ public class ChannelManager {
 
         // Always make sure the local channel is set up.
         this.plugin = p;
-        getLocal();
+        Channel local = getLocal();
+        //TODO: Make cleaner.
+        local.setFormat(parseFormat(config.Settings_defaultFormat));
 
         FactionChannel.setupFactionsDefaults(p,config);
 
